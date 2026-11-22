@@ -20,6 +20,10 @@ logs/
 .env.*
 !.env.example
 
+# Local reference documents (grading sheet, functional spec)
+Barem_evaluare_proiect_web.pdf
+Notix*ce este aplica*.pdf
+
 ## ------------------------------------------------------------
 ## Visual Studio / .NET
 ## ------------------------------------------------------------
