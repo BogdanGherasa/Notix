@@ -1,0 +1,124 @@
+## ------------------------------------------------------------
+## Notix — project specific
+## ------------------------------------------------------------
+# Uploaded files (PDFs, images) — never in Git
+storage/
+
+# Technical and activity logs
+logs/
+*.log
+
+# SQLite databases
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# Environment files with secrets (.env.example IS committed)
+.env
+.env.*
+!.env.example
+
+## ------------------------------------------------------------
+## Visual Studio / .NET
+## ------------------------------------------------------------
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# Visual Studio cache / options
+.vs/
+.vscode/
+.idea/
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+artifacts/
+publish/
+*.publish.xml
+PublishProfiles/
+*.pubxml
+
+# Test results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.trx
+*.coverage
+*.coveragexml
+coverage*.json
+coverage*.xml
+coverage*.info
+TestResults/
+
+# NuGet
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+*.nuget.props
+*.nuget.targets
+project.lock.json
+project.fragment.lock.json
+
+# Misc build / tooling artifacts
+*_i.c
+*_p.c
+*_h.h
+*.ilk
+*.meta
+*.obj
+*.iobj
+*.pch
+*.pdb
+*.ipdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.tmp_proj
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.svclog
+*.scc
+*.cache
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+.localhistory/
+*.binlog
+
+# Node (in case any tooling is used locally)
+node_modules/
+
+## ------------------------------------------------------------
+## OS files
+## ------------------------------------------------------------
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
