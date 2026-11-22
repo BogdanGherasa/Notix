@@ -13,6 +13,13 @@
 4. Codul, numele de fișiere, clasele și comentariile sunt în **engleză**. Tot textul vizibil pentru utilizator (UI, mesaje de eroare, e-mailuri) este în **română, cu diacritice**.
 5. Niciun secret în Git: cheile stau în User Secrets (local) și în `/etc/notix/notix.env` (server). În repo există doar `appsettings.json` fără secrete și `.env.example`.
 6. Bifează `[x]` taskurile terminate chiar în acest fișier.
+7. **Raport la fiecare task.** Când termini un task, creează fișierul `docs/tasks/T-xx_Done.md` (de exemplu `docs/tasks/T-02_Done.md`), scris în română, cu secțiunile:
+   - **Ce am făcut**: fișierele create sau modificate și ce face fiecare;
+   - **Verificare**: comenzile rulate pentru criteriul „Gata când” și rezultatul lor;
+   - **Diferențe față de plan**: orice abatere sau decizie luată în plus, cu motivul („Niciuna”, dacă nu există);
+   - **Întrebări / nerezolvate**: ce rămâne deschis sau ce trebuie decis de om („Niciuna”, dacă nu există). Ce e trecut aici se trece și în `docs/OPEN-QUESTIONS.md`.
+
+   Fișierul intră în același commit cu taskul.
 
 ---
 

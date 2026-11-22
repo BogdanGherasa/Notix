@@ -8,3 +8,8 @@
   *Decizie: ImageSharp a fost scos complet și înlocuit cu `SkiaSharp` + `SkiaSharp.NativeAssets.Linux.NoDependencies` (MIT). PLAN.md este actualizat (secțiunea 2, T-16, T-40). Verificat: `dotnet build -c Release` are 0 avertismente, iar `dotnet list package --vulnerable --include-transitive` nu găsește nimic.*
 - ✅ **REZOLVAT — EF Core fixat pe 10.0.x.** Ultima versiune EF Core (11.x) cere .NET 11. Proiectul țintește .NET 10, deci `Microsoft.EntityFrameworkCore.Sqlite` și `Microsoft.EntityFrameworkCore.Design` sunt fixate pe 10.0.15.
   *Decizie: acceptat, trecut în PLAN.md (secțiunea 2).*
+
+## T-02 — Configurație
+
+- ⏳ **DESCHIS — Contul de admin în Development.** `Admin:Email` și `Admin:Password` sunt goale, iar planul nu dă valori pentru Development. Trebuie setate în User Secrets înainte de T-05 (`dotnet user-secrets set "Admin:Email" ...` și `dotnet user-secrets set "Admin:Password" ...` în `backend/src/Notix.Api`).
+- ⏳ **DESCHIS — Subdomeniul DuckDNS.** `App:BaseUrl` pentru producție e gol, pentru că numele exact al subdomeniului este încă „[DE COMPLETAT]” în plan.
