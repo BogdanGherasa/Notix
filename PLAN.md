@@ -70,8 +70,8 @@
 | Plăți | **Stripe Checkout** (redirect, modul test), moneda `ron`. Confirmarea vine prin webhook `checkout.session.completed`, cu verificare suplimentară pe pagina de succes. |
 | E-mail | **Brevo SMTP** (`smtp-relay.brevo.com:587`, STARTTLS), prin **MailKit**. În Development, dacă SMTP nu e configurat, e-mailul se scrie în log (`LogEmailSender`). |
 | Fișiere | Stocate pe disc în `storage/` (**în afara** folderului public), cu nume GUID. PDF-urile se descarcă doar prin API, cu verificarea drepturilor. |
-| Imagini | Reprocesate cu **SixLabors.ImageSharp**: redimensionate la maximum 1600px lățime, **convertite în JPEG la calitate 85**, fără metadate. |
-| PDF | Verificat cu **UglyToad.PdfPig** (parsare + număr de pagini) și cu o scanare de octeți după cuvinte-cheie periculoase. |
+| Imagini | Reprocesate cu **SkiaSharp** (licență MIT, fără cheie): redimensionate la maximum 1600px lățime, **convertite în JPEG la calitate 85**, fără metadate. *(Inițial ImageSharp; înlocuit pentru că versiunile fără vulnerabilități cer cheie de licență la build.)* |
+| PDF | Verificat cu **PdfPig** (pachetul NuGet `PdfPig`, namespace `UglyToad.PdfPig`): parsare + număr de pagini, plus o scanare de octeți după cuvinte-cheie periculoase. |
 | Logging | **Serilog** pentru logul tehnic (`logs/app-.log`). Clasă proprie `FileActivityLogger` pentru jurnalul de activitate: JSON pe linii în `logs/activity-YYYY-MM-DD.log`. |
 | Rate limit | Middleware-ul ASP.NET Core `RateLimiter`: fereastră fixă, **100 de cereri / 60 s / IP** pe `/api/*`, răspuns `429` cu `Retry-After`. |
 | Prețuri | Stocate ca **întreg în bani** (`PriceBani`, 1 leu = 100 bani). SQLite nu poate ordona după `decimal`. Afișare: `24,99 lei`. |
@@ -84,8 +84,10 @@
 
 ### Pachete NuGet
 
-`Notix.Api`: `Microsoft.EntityFrameworkCore.Sqlite`, `Microsoft.EntityFrameworkCore.Design`, `Stripe.net`, `SixLabors.ImageSharp`, `UglyToad.PdfPig`, `MailKit`, `Serilog.AspNetCore`, `Serilog.Sinks.File`.
-`Notix.Tests`: `xunit`, `xunit.runner.visualstudio`, `Microsoft.NET.Test.Sdk`, `Microsoft.EntityFrameworkCore.Sqlite`.
+`Notix.Api`: `Microsoft.EntityFrameworkCore.Sqlite` și `Microsoft.EntityFrameworkCore.Design` (**fixate pe 10.0.x**; EF Core 11 cere .NET 11), `Stripe.net`, `SkiaSharp`, `SkiaSharp.NativeAssets.Linux.NoDependencies` (pentru server și pentru GitHub Actions pe Ubuntu), `PdfPig`, `MailKit`, `Serilog.AspNetCore`, `Serilog.Sinks.File`.
+`Notix.Tests`: `xunit`, `xunit.runner.visualstudio`, `Microsoft.NET.Test.Sdk`, `Microsoft.EntityFrameworkCore.Sqlite` (10.0.x).
+
+Nu se folosește niciun pachet care cere cheie de licență la build. Nu se acceptă versiuni cu vulnerabilități cunoscute: `dotnet list package --vulnerable` trebuie să nu raporteze nimic.
 
 ---
 
@@ -343,7 +345,14 @@ Imaginile unui material neaprobat sau șters sunt vizibile doar pentru autor și
   **Gata când:** testele din T-40 pentru mărime, extensie și semnătură trec.
 - [ ] **T-16 Anti-steganografie / conținut ascuns.**
   - **PDF** (`PdfFileValidator.InspectContentAsync`): scanează octeții după `/JavaScript`, `/JS`, `/OpenAction`, `/AA`, `/Launch`, `/EmbeddedFile`, `/EmbeddedFiles`, `/RichMedia`, `/XFA`, `/SubmitForm`, `/ImportData` → respins („PDF-ul conține scripturi, atașamente sau acțiuni ascunse”). Date de peste 1024 de octeți după ultimul `%%EOF` → respins („PDF-ul conține date ascunse după sfârșitul documentului”). Deschide fișierul cu PdfPig: dacă nu se poate parsa sau are 0 pagini → respins. Pentru un PDF valid, întoarce `PageCount`.
-  - **Imagini** (`ImageFileValidator.InspectContentAsync`): încarcă imaginea cu ImageSharp (eșec → respins; dimensiuni sub 200×200 sau peste 8000×8000 → respins), `image.Metadata.ExifProfile = null` (la fel IPTC, XMP, ICC), redimensionare la lățime maximă 1600 px și **salvare ca JPEG, calitate 85**. Re-encodarea elimină datele atașate după marcajul de final și distruge datele ascunse în biții mai puțin semnificativi. Se salvează **doar** imaginea re-encodată, niciodată originalul.
+  - **Imagini** (`ImageFileValidator.InspectContentAsync`), cu SkiaSharp:
+    1. `SKCodec.Create(stream)`; `null` → respins („Imaginea nu poate fi citită”). Dimensiuni din `codec.Info` sub 200×200 sau peste 8000×8000 → respins.
+    2. Decodare în `SKBitmap`, apoi aplicarea orientării din `codec.EncodedOrigin` (rotire sau oglindire). Fără acest pas, pozele făcute cu telefonul ar apărea întoarse, pentru că EXIF-ul se pierde.
+    3. Redimensionare la lățime maximă 1600 px, cu proporțiile păstrate (`SKBitmap.Resize` cu `SKSamplingOptions` de calitate înaltă).
+    4. Desenare pe un `SKCanvas` cu fundal **alb** (PNG-urile transparente ar ieși altfel cu fundal negru în JPEG).
+    5. `SKImage.FromBitmap(...).Encode(SKEncodedImageFormat.Jpeg, 85)`. Encoder-ul SkiaSharp **nu scrie** EXIF, XMP, IPTC sau ICC, deci rezultatul nu are metadate.
+
+    Re-encodarea elimină datele atașate după marcajul de final și distruge datele ascunse în biții mai puțin semnificativi. Se salvează **doar** imaginea re-encodată, niciodată originalul. Toate obiectele Skia se eliberează cu `using`.
   - Documentează în `docs/security.md` ce verifică fiecare pas și de ce.
 
   **Gata când:** un PDF cu `/JavaScript` e respins; o imagine cu EXIF iese fără EXIF; un PNG cu date adăugate la final iese ca JPEG curat.
@@ -428,7 +437,7 @@ Imaginile unui material neaprobat sau șters sunt vizibile doar pentru autor și
   4. `PdfValidator_AcceptsCleanPdf_AndReturnsPageCount`
   5. `FileValidator_RejectsFileLargerThan12MB`
   6. `FileValidator_RejectsDisallowedExtensions` (Theory: `.exe`, `.php`, `.pdf.exe`, `.svg`, fără extensie)
-  7. `ImageValidator_StripsExifAndOutputsJpeg`
+  7. `ImageValidator_StripsExifAndOutputsJpeg` (rezultatul începe cu `FF D8 FF` și nu conține segmentul APP1 `FF E1` urmat de `Exif\0\0`)
   8. `MaterialService_RejectsPriceOutsideRange` (Theory: 1,99 și 500,01)
   9. `MaterialService_ReplacingPdf_ResetsStatusToPending`
   10. `CartService_CannotAddOwnMaterial`
