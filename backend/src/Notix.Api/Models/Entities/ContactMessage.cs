@@ -7,7 +7,6 @@ public class ContactMessage : BaseEntity
     public string Subject { get; set; } = string.Empty;
     public string Message { get; set; } = string.Empty;
 
-    /// <summary>Set when the sender was logged in.</summary>
     public int? UserId { get; set; }
     public User? User { get; set; }
 }

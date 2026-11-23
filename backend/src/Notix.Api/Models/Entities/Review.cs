@@ -8,7 +8,6 @@ public class Review : BaseEntity
     public int BuyerId { get; set; }
     public User Buyer { get; set; } = null!;
 
-    /// <summary>Integer rating, 1–5.</summary>
     public int Rating { get; set; }
     public string? Comment { get; set; }
 }

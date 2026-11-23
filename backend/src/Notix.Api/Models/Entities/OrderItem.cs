@@ -8,6 +8,5 @@ public class OrderItem : BaseEntity
     public int MaterialId { get; set; }
     public Material Material { get; set; } = null!;
 
-    /// <summary>Price at the moment of purchase, in bani. Not redundant: the material price may change later.</summary>
     public int UnitPriceBani { get; set; }
 }
