@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Notix.Api.Configuration;
 using Notix.Api.Data;
+using Notix.Api.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,8 @@ builder.Services.AddNotixOptions(builder.Configuration, builder.Environment);
 // SQLite through EF Core.
 builder.Services.AddDbContext<NotixDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("Default")));
+
+builder.Services.AddNotixRepositories();
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
