@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 
-namespace Notix.Api.Repositories;
+namespace Notix.Api.Repositories.Interfaces;
 
 public interface IRepository<T> where T : class
 {

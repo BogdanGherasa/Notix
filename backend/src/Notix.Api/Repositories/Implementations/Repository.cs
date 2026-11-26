@@ -1,8 +1,9 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Notix.Api.Data;
+using Notix.Api.Repositories.Interfaces;
 
-namespace Notix.Api.Repositories;
+namespace Notix.Api.Repositories.Implementations;
 
 public class Repository<T>(NotixDbContext db) : IRepository<T> where T : class
 {

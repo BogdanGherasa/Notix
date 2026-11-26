@@ -2,7 +2,19 @@
 
 ## Ce am făcut
 
-Toate fișierele sunt în `backend/src/Notix.Api/Repositories/`:
+Toate fișierele sunt în `backend/src/Notix.Api/Repositories/`, împărțite pe subfoldere (cu namespace-ul corespunzător):
+
+```
+Repositories/
+├─ Interfaces/        IRepository<T>, IMaterialRepository, IUserRepository, IOrderRepository,
+│                     IReviewRepository, ICartRepository, ILookupRepository
+├─ Implementations/   Repository<T>, MaterialRepository, UserRepository, OrderRepository,
+│                     ReviewRepository, CartRepository, LookupRepository
+├─ Common/            PagedResult<T>, MaterialCatalogQuery (+ MaterialSort), RatingSummary, LikePattern
+└─ RepositoryServiceCollectionExtensions.cs
+```
+
+Codul nu are comentarii.
 
 - **`IRepository<T>` + `Repository<T>`**: repository-ul generic, cu `GetByIdAsync`, `ListAsync(predicate)`, `AddAsync`, `Update`, `Remove`, `SaveChangesAsync`. `GetByIdAsync` primește `params object[]`, ca să meargă și pentru cheile compuse (`CartItem`: `GetByIdAsync(userId, materialId)`).
 - **`IMaterialRepository` / `MaterialRepository`**:

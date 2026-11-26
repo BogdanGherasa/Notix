@@ -1,3 +1,6 @@
+using Notix.Api.Repositories.Implementations;
+using Notix.Api.Repositories.Interfaces;
+
 namespace Notix.Api.Repositories;
 
 public static class RepositoryServiceCollectionExtensions

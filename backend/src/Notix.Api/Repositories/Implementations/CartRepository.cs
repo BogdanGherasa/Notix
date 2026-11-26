@@ -1,8 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Notix.Api.Data;
 using Notix.Api.Models.Entities;
+using Notix.Api.Repositories.Interfaces;
 
-namespace Notix.Api.Repositories;
+namespace Notix.Api.Repositories.Implementations;
 
 public class CartRepository(NotixDbContext db) : Repository<CartItem>(db), ICartRepository
 {
@@ -19,7 +20,6 @@ public class CartRepository(NotixDbContext db) : Repository<CartItem>(db), ICart
     public Task<bool> ContainsAsync(int userId, int materialId) =>
         Set.AnyAsync(c => c.UserId == userId && c.MaterialId == materialId);
 
-    // Only marks the items for deletion; the caller saves them together with its other changes.
     public async Task RemoveItemsAsync(int userId, IEnumerable<int> materialIds)
     {
         var ids = materialIds.ToList();

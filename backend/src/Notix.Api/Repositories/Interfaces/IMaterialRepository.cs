@@ -1,6 +1,7 @@
 using Notix.Api.Models.Entities;
+using Notix.Api.Repositories.Common;
 
-namespace Notix.Api.Repositories;
+namespace Notix.Api.Repositories.Interfaces;
 
 public interface IMaterialRepository : IRepository<Material>
 {

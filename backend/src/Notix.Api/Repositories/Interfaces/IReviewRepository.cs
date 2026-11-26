@@ -1,8 +1,7 @@
 using Notix.Api.Models.Entities;
+using Notix.Api.Repositories.Common;
 
-namespace Notix.Api.Repositories;
-
-public record RatingSummary(double? Average, int Count);
+namespace Notix.Api.Repositories.Interfaces;
 
 public interface IReviewRepository : IRepository<Review>
 {

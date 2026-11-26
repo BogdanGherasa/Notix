@@ -1,8 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Notix.Api.Data;
 using Notix.Api.Models.Entities;
+using Notix.Api.Repositories.Common;
+using Notix.Api.Repositories.Interfaces;
 
-namespace Notix.Api.Repositories;
+namespace Notix.Api.Repositories.Implementations;
 
 public class ReviewRepository(NotixDbContext db) : Repository<Review>(db), IReviewRepository
 {

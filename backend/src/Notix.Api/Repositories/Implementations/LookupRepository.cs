@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Notix.Api.Data;
 using Notix.Api.Models.Entities;
+using Notix.Api.Repositories.Interfaces;
 
-namespace Notix.Api.Repositories;
+namespace Notix.Api.Repositories.Implementations;
 
-// Read-only access to the catalog reference data: categories, universities, faculties, subjects.
 public class LookupRepository(NotixDbContext db) : ILookupRepository
 {
     public Task<List<Category>> GetCategoriesAsync() => db.Categories

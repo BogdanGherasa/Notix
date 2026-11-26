@@ -1,8 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Notix.Api.Data;
 using Notix.Api.Models.Entities;
+using Notix.Api.Repositories.Interfaces;
 
-namespace Notix.Api.Repositories;
+namespace Notix.Api.Repositories.Implementations;
 
 public class UserRepository(NotixDbContext db) : Repository<User>(db), IUserRepository
 {
@@ -18,6 +19,5 @@ public class UserRepository(NotixDbContext db) : Repository<User>(db), IUserRepo
         return Set.AnyAsync(u => u.Email == normalized);
     }
 
-    // Emails are stored lowercase (CHECK constraint), so lookups normalize the same way.
     private static string Normalize(string email) => email.Trim().ToLowerInvariant();
 }

@@ -1,4 +1,4 @@
-namespace Notix.Api.Repositories;
+namespace Notix.Api.Repositories.Common;
 
 public enum MaterialSort
 {
@@ -8,7 +8,6 @@ public enum MaterialSort
     Title
 }
 
-// Prices are in bani; the service converts the lei values received from the API.
 public record MaterialCatalogQuery
 {
     public const int DefaultPageSize = 12;

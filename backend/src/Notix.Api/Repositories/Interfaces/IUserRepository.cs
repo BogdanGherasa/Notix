@@ -1,6 +1,6 @@
 using Notix.Api.Models.Entities;
 
-namespace Notix.Api.Repositories;
+namespace Notix.Api.Repositories.Interfaces;
 
 public interface IUserRepository : IRepository<User>
 {

@@ -2,11 +2,11 @@ using Microsoft.EntityFrameworkCore;
 using Notix.Api.Data;
 using Notix.Api.Models.Entities;
 using Notix.Api.Models.Enums;
+using Notix.Api.Repositories.Common;
+using Notix.Api.Repositories.Interfaces;
 
-namespace Notix.Api.Repositories;
+namespace Notix.Api.Repositories.Implementations;
 
-// Deleted materials are excluded explicitly here (no global query filter),
-// because the library and the download still need to load them by id.
 public class MaterialRepository(NotixDbContext db) : Repository<Material>(db), IMaterialRepository
 {
     public async Task<PagedResult<Material>> GetCatalogAsync(MaterialCatalogQuery query)
@@ -43,7 +43,6 @@ public class MaterialRepository(NotixDbContext db) : Repository<Material>(db), I
         return new PagedResult<Material>(items, total, page, pageSize);
     }
 
-    // Loads the material whatever its status: the service decides who may see it.
     public Task<Material?> GetDetailsAsync(int id) => Set
         .Include(m => m.Seller)
         .Include(m => m.Category)
@@ -53,7 +52,6 @@ public class MaterialRepository(NotixDbContext db) : Repository<Material>(db), I
         .AsSplitQuery()
         .FirstOrDefaultAsync(m => m.Id == id);
 
-    // Same subject first, then same category; newest first inside each group.
     public Task<List<Material>> GetSimilarAsync(Material material, int count = 4) => WithCatalogData(Published()
             .Where(m => m.Id != material.Id
                         && (m.SubjectId == material.SubjectId || m.CategoryId == material.CategoryId))
@@ -63,7 +61,6 @@ public class MaterialRepository(NotixDbContext db) : Repository<Material>(db), I
             .Take(count))
         .ToListAsync();
 
-    // Best rated first (materials without reviews count as 0), then newest.
     public Task<List<Material>> GetFeaturedAsync(int count = 6) => WithCatalogData(Published()
             .OrderByDescending(m => m.Reviews.Average(r => (double?)r.Rating) ?? 0)
             .ThenByDescending(m => m.CreatedAt)
@@ -79,7 +76,6 @@ public class MaterialRepository(NotixDbContext db) : Repository<Material>(db), I
         .Include(m => m.Subject).ThenInclude(s => s.Faculty).ThenInclude(f => f.University)
         .AsNoTracking();
 
-    // Id is the tie-breaker, so pages stay stable when values are equal.
     private static IQueryable<Material> Sorted(IQueryable<Material> materials, MaterialSort sort) => sort switch
     {
         MaterialSort.PriceAsc => materials.OrderBy(m => m.PriceBani).ThenBy(m => m.Id),

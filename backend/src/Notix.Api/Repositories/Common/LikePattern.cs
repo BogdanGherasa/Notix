@@ -1,7 +1,5 @@
-namespace Notix.Api.Repositories;
+namespace Notix.Api.Repositories.Common;
 
-// Builds a LIKE pattern from user input: %, _ and the escape character itself are matched
-// literally. The pattern is always sent as a SQL parameter, never concatenated into SQL.
 public static class LikePattern
 {
     public const string EscapeCharacter = "\\";
